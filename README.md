@@ -1,8 +1,9 @@
 # Metadata Server
 
-[![Go Reference](https://pkg.go.dev/badge/image)](https://pkg.go.dev/github.com/minherz/metadataserver)
-[![Go Report](https://goreportcard.com/badge/github.com/ncruces/go-strftime)](https://goreportcard.com/report/github.com/minherz/metadataserver)
-[![Go Coverage](https://github.com/ncruces/go-strftime/wiki/coverage.svg)](https://raw.githack.com/wiki/minherz/metadataserver/coverage.html)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/minherz/metadataserver)
+![Go Report](https://goreportcard.com/report/github.com/minherz/metadataserver)
+![Go Coverage](https://raw.githack.com/wiki/minherz/metadataserver/coverage.html)
+![Repo license](https://badgen.net/badge/license/Apache%202.0/blue)
 
 This is a simulation of the metadata server that run on cloud environments of such providers as Amazon, Google or Azure.
 This server is intended to assist in local debugging of applications that are intended for run in cloud environments and make use of the environment metadata.
