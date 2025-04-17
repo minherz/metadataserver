@@ -10,7 +10,7 @@ The default configuration of the metadata server supports the following endpoint
 
 * `http://metadata.google.internal/computeMetadata/v1`
 
-> [!NOTE!]
+> [!NOTE]
 > Currently metadata server does not support HTTPS endpoints
 
 ## Launch instructions
