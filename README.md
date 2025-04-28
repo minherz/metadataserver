@@ -1,8 +1,10 @@
 # Metadata Server
 
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/minherz/metadataserver)
-![Go Report](https://goreportcard.com/report/github.com/minherz/metadataserver)
+[![Go Report Card](https://goreportcard.com/badge/github.com/minherz/metadataserver?style=flat-square)](https://goreportcard.com/report/github.com/minherz/metadataserver)
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/minherz/metadataserver)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/minherz/metadataserver)](https://pkg.go.dev/github.com/minherz/metadataserver)
 ![Go Coverage](https://raw.githack.com/wiki/minherz/metadataserver/coverage.html)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/minherz/metadataserver)
 ![Repo license](https://badgen.net/badge/license/Apache%202.0/blue)
 
 This is a simulation of the metadata server that run on cloud environments of such providers as Amazon, Google or Azure.
@@ -13,7 +15,7 @@ The metadata server listens to port `80` on `169.254.169.254`. If the code uses 
 
 The default configuration of the metadata server supports the following endpoint:
 
-* `http://metadata.google.internal/computeMetadata/v1`
+* `http://169.254.169.254/computeMetadata/v1`
 
 > [!NOTE]
 > Currently metadata server does not support HTTPS endpoints

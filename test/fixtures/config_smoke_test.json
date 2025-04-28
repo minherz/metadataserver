@@ -1,0 +1,11 @@
+{
+    "address": "1.2.3.4",
+    "endpoint": "custom/endpoint",
+    "port": 8080,
+    "shutdownTimeout": 15,
+    "metadata": {
+        "entry1": {
+            "value": "one"
+        }
+    }
+}

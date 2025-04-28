@@ -1,0 +1,10 @@
+{
+    "metadata": {
+        "entry1": {
+            "value": "one"
+        },
+        "entry2": {
+            "env": "two"
+        }
+    }
+}
