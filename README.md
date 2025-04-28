@@ -43,4 +43,63 @@ For more options, run:
 
 ## Custom configuration
 
-TBD
+You can customize the behavior of the metadata server by setting the following parameters:
+
+| Name | Type | Description |
+|---|---|---|
+| `address` | `string` | IP address of where the server serves the requests. Default value `169.254.169.254`. |
+| `port` | `numeric` | Port number at which the server listens. Default value `80`. |
+| `endpoint` | `string` | The root path for all handlers. Server responses with "ok" when a request is sent to this path. The path can omit the starting and ending slashes. Default value `computeMetadata/v1`. |
+| `shutdownTimeout` | `numeric` | The time in seconds that takes to server to timeout at shutdown. Default value `5` (sec). |
+| `metadata` | map | Collection of key-values describing the returned metadata. See next paragraph for more information. |
+
+### Metadata keys and values
+
+Metadata maps keys to values allowing customization of data that the server returns on different paths. The path is composed of concatinating the `endpoint` with the metadata's key string.
+For example, for the default endpoint and the key "project/project-id", the server will respond at the path "/computeMetadata/v1/project/project-id" with the value defined in the metadata map.
+
+Metadata map supports two types of values:
+
+* Static values -- literals that are returned when a request is send using the path of the endpoint + key. Use the following JSON to define the static value:
+
+  ```json
+  {
+    "value": "STATIC_VALUE"
+  }
+  ```
+
+* Environment-based values -- the returned value is retrieved from the environment variable which name is defined in the metadata's value.
+  When a request is send using the path of the endpoint + key, the server will read and return the value of the environment variable. Use the following JSON to define the environment-based value:
+
+  ```json
+  {
+    "env": "ENV_VARIABLE_NAME"
+  }
+  ```
+
+The following example of the custom configuration sets up the server to serve three metadata values at the following paths:
+
+* `/custom/endpoint/static` path will return `always the same`
+* `/custom/endpoint/environment_a` path will return the value of the environment variable with the name `X_A`
+* `/custom/endpoint/another/static` path will return `this is another always the same value`
+
+```json
+{
+    "endpoint": "custom/endpoint",
+    "metadata": {
+        "static": {
+            "value": "always the same"
+        },
+        "environment_a": {
+            "env": "X_A"
+        },
+        "another/static": {
+            "value": "this is another always the same value"
+        }
+    }
+}
+```
+
+> [!NOTE]
+> Configuration values that were not customized keep their default values.
+> If no metadata is configured, the server will respond at the path defined by the endpoint only.
