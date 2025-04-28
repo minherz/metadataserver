@@ -3,7 +3,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/minherz/metadataserver?style=flat-square)](https://goreportcard.com/report/github.com/minherz/metadataserver)
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](http://godoc.org/github.com/minherz/metadataserver)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/minherz/metadataserver)](https://pkg.go.dev/github.com/minherz/metadataserver)
-![Go Coverage](https://raw.githack.com/wiki/minherz/metadataserver/coverage.html)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/minherz/metadataserver)
 ![Repo license](https://badgen.net/badge/license/Apache%202.0/blue)
 
