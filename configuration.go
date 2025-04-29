@@ -6,8 +6,10 @@ import (
 	"os"
 )
 
+// Metadata is a type used to describe metadata values
 type Metadata func() string
 
+// Configuration object stores metadata server configuration values
 type Configuration struct {
 	Port            int
 	Address         string
@@ -38,6 +40,7 @@ var DefaultConfigurationHandlers = map[string]Metadata{
 }
 var EmptyConfigurationHandlers = map[string]Metadata{}
 
+// NewConfigFromFile instantiates a new `Configuration` object from a file.
 func NewConfigFromFile(path string) (*Configuration, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -67,6 +70,8 @@ func NewConfigFromFile(path string) (*Configuration, error) {
 	return c, nil
 }
 
+// NewConfiguration instantiates a new `Configuration` object
+// with default values and a custom collection of metadata handlers
 func NewConfiguration(handlers map[string]Metadata) *Configuration {
 	if len(handlers) == 0 {
 		handlers = DefaultConfigurationHandlers

@@ -13,26 +13,33 @@ import (
 	"time"
 )
 
+// Server defines a metadata server object.
 type Server struct {
 	logger *slog.Logger
 	config *Configuration
 	server *http.Server
 }
 
+// Option to use for the new metadata server initialization.
 type Option func(*Server)
 
+// WithConfiguration creates an Option that sets up a new configuration for the server.
+// DO NOT use it with `WithConfigFile` option.
 func WithConfiguration(c *Configuration) Option {
 	return func(s *Server) {
 		s.config = c
 	}
 }
 
+// WithLogger creates an Option that sets up `slog.Logger` for the server.
 func WithLogger(l *slog.Logger) Option {
 	return func(s *Server) {
 		s.logger = l
 	}
 }
 
+// WithConfigFile creates an Option that loads a server configuration from a file.
+// DO NOT use it with `WithConfiguration` option.
 func WithConfigFile(path string) Option {
 	return func(s *Server) {
 		c, err := NewConfigFromFile(path)
@@ -46,7 +53,8 @@ func WithConfigFile(path string) Option {
 	}
 }
 
-func NewServer(opts ...Option) (*Server, error) {
+// New creates a new instance of the server.
+func New(opts ...Option) (*Server, error) {
 	s := &Server{config: NewConfiguration(DefaultConfigurationHandlers)}
 	for _, opt := range opts {
 		opt(s)
@@ -76,10 +84,12 @@ func NewServer(opts ...Option) (*Server, error) {
 	return s, nil
 }
 
+// Configuration returns a copy of the server's configuration
 func (s *Server) Configuration() Configuration {
 	return *s.config
 }
 
+// HttpHandler returns collection of HTTP handlers
 func (s *Server) HttpHandler() http.Handler {
 	if s.server == nil {
 		return nil
@@ -87,6 +97,8 @@ func (s *Server) HttpHandler() http.Handler {
 	return s.server.Handler
 }
 
+// Start launches the server that will listen at the configured address and port
+// and will serve the metadata.
 func (s *Server) Start() {
 	s.logger.DebugContext(context.Background(), "starting metadata server", slog.Any("configuration", s.config))
 
@@ -99,6 +111,7 @@ func (s *Server) Start() {
 	}()
 }
 
+// Stop shuts down the running server
 func (s *Server) Stop(ctx context.Context) error {
 	s.logger.DebugContext(ctx, "stopping metadata server", slog.Any("configuration", s.config))
 	shutdownCtx := context.Background()

@@ -68,7 +68,7 @@ func TestNewServer(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			got, err := metadataserver.NewServer(test.input...)
+			got, err := metadataserver.New(test.input...)
 			if err != nil {
 				t.Errorf("expected no errors:\n%s", err)
 			}
@@ -94,7 +94,7 @@ func TestServer(t *testing.T) {
 			},
 		},
 	}
-	s, err := metadataserver.NewServer(metadataserver.WithConfiguration(testConfig))
+	s, err := metadataserver.New(metadataserver.WithConfiguration(testConfig))
 	if err != nil {
 		t.Errorf("expected no errors:\n%s", err)
 	}

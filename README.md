@@ -19,29 +19,45 @@ The default configuration of the metadata server supports the following endpoint
 > [!NOTE]
 > Currently metadata server does not support HTTPS endpoints
 
-## Launch instructions
+## Use the package
 
-TBD: download instructions
+To use the package do the following:
 
-To launch the metadata server with the default configuration run:
+1. Import it in your code:
 
-```shell
-./metadataserver
-```
+   ```go
+   import "github.com/minherz/metadataserver"
+   ```
 
-To run the metadata server with custom configuration run:
+2. Instantiate the server:
 
-```shell
-./metadataserver --file="path-to-configuration-file"
-```
+   ```go
+   ms, err := metadataserver.New(metadataserver.WithConfigFile("path/to/config/file"))
+   ```
 
-For more options, run:
+   See other [options] for more configurations.
 
-```shell
-./metadataserver --help
-```
+3. Start the server:
 
-## Custom configuration
+   ```go
+   ms.Start()
+   ```
+
+4. Stop the server:
+
+   ```go
+   ms.Stop(context.Background())
+   ```
+
+### Options
+
+You can initialize server with the following options:
+
+* `WithConfigFile()` -- this option accept a path to the JSON configuration file. See [Custom configuration](#custom-configuration) for the file format. Do not use it together with `WithConfiguration()`.
+* `WithConfiguration()` -- accepts a reference to `Configuration` object. Do not use it together with `WithConfigFile()`.
+* `WithLogger` -- allows to setup a custom `slog.Logger`. If no logger is set up the metadata server writes logs to `io.Discard`.
+
+### Custom configuration
 
 You can customize the behavior of the metadata server by setting the following parameters:
 
@@ -53,7 +69,7 @@ You can customize the behavior of the metadata server by setting the following p
 | `shutdownTimeout` | `numeric` | The time in seconds that takes to server to timeout at shutdown. Default value `5` (sec). |
 | `metadata` | map | Collection of key-values describing the returned metadata. See next paragraph for more information. |
 
-### Metadata keys and values
+#### Metadata keys and values
 
 Metadata maps keys to values allowing customization of data that the server returns on different paths. The path is composed of concatinating the `endpoint` with the metadata's key string.
 For example, for the default endpoint and the key "project/project-id", the server will respond at the path "/computeMetadata/v1/project/project-id" with the value defined in the metadata map.
