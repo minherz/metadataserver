@@ -64,6 +64,20 @@ func TestNewServer(t *testing.T) {
 			},
 			want: wantConfig,
 		},
+		{
+			name: "opt_address_and_port",
+			input: []metadataserver.Option{
+				metadataserver.WithAddress("10.11.12.13"),
+				metadataserver.WithPort(777),
+			},
+			want: metadataserver.Configuration{
+				Address:         "10.11.12.13",
+				Endpoint:        metadataserver.DefaultEndpoint,
+				Port:            777,
+				ShutdownTimeout: metadataserver.DefaultShutdownTimeout,
+				Handlers:        metadataserver.DefaultConfigurationHandlers,
+			},
+		},
 	}
 
 	for _, test := range tests {

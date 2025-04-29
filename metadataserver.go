@@ -24,10 +24,32 @@ type Server struct {
 type Option func(*Server)
 
 // WithConfiguration creates an Option that sets up a new configuration for the server.
-// DO NOT use it with `WithConfigFile` option.
+// DO NOT use it with `WithConfigFile`, `WithAddress` or `WithPort` option.
 func WithConfiguration(c *Configuration) Option {
 	return func(s *Server) {
 		s.config = c
+	}
+}
+
+// WithAddress creates an Option that sets up a serving address for the server.
+// DO NOT use it with `WithConfigFile` or `WithConfiguration` option.
+func WithAddress(address string) Option {
+	return func(s *Server) {
+		if s.config == nil {
+			s.config = NewConfiguration(DefaultConfigurationHandlers)
+		}
+		s.config.Address = address
+	}
+}
+
+// WithAddress creates an Option that sets up a listening port for the server.
+// DO NOT use it with `WithConfiguration`, `WithAddress` or `WithPort` option.
+func WithPort(port int) Option {
+	return func(s *Server) {
+		if s.config == nil {
+			s.config = NewConfiguration(DefaultConfigurationHandlers)
+		}
+		s.config.Port = port
 	}
 }
 
@@ -55,9 +77,12 @@ func WithConfigFile(path string) Option {
 
 // New creates a new instance of the server.
 func New(opts ...Option) (*Server, error) {
-	s := &Server{config: NewConfiguration(DefaultConfigurationHandlers)}
+	s := &Server{}
 	for _, opt := range opts {
 		opt(s)
+	}
+	if s.config == nil {
+		s.config = NewConfiguration(DefaultConfigurationHandlers)
 	}
 	if s.logger == nil {
 		s.logger = slog.New(slog.NewTextHandler(io.Discard, nil))

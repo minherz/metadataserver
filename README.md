@@ -53,8 +53,14 @@ To use the package do the following:
 
 You can initialize server with the following options:
 
-* `WithConfigFile()` -- this option accept a path to the JSON configuration file. See [Custom configuration](#custom-configuration) for the file format. Do not use it together with `WithConfiguration()`.
-* `WithConfiguration()` -- accepts a reference to `Configuration` object. Do not use it together with `WithConfigFile()`.
+* `WithConfigFile()` -- allows to configure server using the JSON configuration file. See [Custom configuration](#custom-configuration) for the file format.
+  Do not use it together with `WithConfiguration()`, `WithAddress()` and `WithPort()`.
+* `WithConfiguration()` -- allows to configure server with the `Configuration` object.
+  Do not use it together with `WithConfigFile()`, `WithAddress()` and `WithPort()`.
+* `WithAddress()` -- allows to set up the serving address for the server.
+  Do not use it together with `WithConfigFile()` and `WithConfiguration()`.
+* `WithPort()` -- allows to set up the port that the server will be listening at.
+  Do not use it together with `WithConfigFile()` and `WithConfiguration()`.
 * `WithLogger` -- allows to setup a custom `slog.Logger`. If no logger is set up the metadata server writes logs to `io.Discard`.
 
 ### Custom configuration
