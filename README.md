@@ -1,6 +1,7 @@
 # Metadata Server
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/minherz/metadataserver)](https://goreportcard.com/report/github.com/minherz/metadataserver)
+[![Build](https://github.com/minherz/metadataserver/actions/workflows/go.yaml/badge.svg)](https://github.com/minherz/metadataserver/actions/workflows/go.yaml)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/minherz/metadataserver)](https://pkg.go.dev/github.com/minherz/metadataserver)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/minherz/metadataserver)
 ![Repo license](https://badgen.net/badge/license/Apache%202.0/blue)
