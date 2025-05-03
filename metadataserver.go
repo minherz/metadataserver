@@ -126,14 +126,20 @@ func (s *Server) HttpHandler() http.Handler {
 // and will serve the metadata.
 func (s *Server) Start(ctx context.Context) error {
 	s.logger.DebugContext(ctx, "starting metadata server", slog.Any("configuration", s.config))
-
+	ch := make(chan error)
 	go func() {
 		var srv = s.server
 		err := srv.ListenAndServe()
+		ch <- err
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			s.logger.ErrorContext(ctx, "error listening and serving", slog.String("error", err.Error()))
 		}
 	}()
+	select {
+	case err := <-ch:
+		return err
+	case <-time.After(100 * time.Millisecond):
+	}
 	return nil
 }
 
