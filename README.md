@@ -6,23 +6,42 @@
 ![Repo license](https://badgen.net/badge/license/Apache%202.0/blue)
 
 This is a simulation of the metadata server that run on cloud environments of such providers as Amazon, Google or Azure.
-This server is intended to assist in local debugging of applications that are intended for run in cloud environments and make use of the environment metadata.
-Alternative is to debug these applications in the cloud environment which isn't always convenient or to customize the application code to mock or substitute calls to metadata server.
+This server is intended to assist in local debugging of applications that are intended for run in cloud environments and make use of the environment's metadata server.
 
-The metadata server listens to port `80` on `169.254.169.254`. If the code uses a hostname (e.g. `metadata.google.internal`) this hostname should be manually configured in the local environment.
+The package does not implement any networking configuration on the local host.
+If you code uses a hostname (e.g. `metadata.google.internal` for Google's metadata server), this hostname has to be explicitly configured in your debug environment or your code has to run the metadataserver using IP address instead.
+Majority of providers run their metadata servers using `169.254.169.254` IP address.
+It is a [link-local address](https://en.wikipedia.org/wiki/Link-local_address).
+This means that these addresses are usually have to be configured in the environment prior to use.
 
-The default configuration of the metadata server supports the following endpoint:
+Use the following Linux shell command to configure link this address to your localhost interface:
+
+```shell
+sudo ip addr add 169.254.169.254/16 dev lo
+```
+
+Use the following PowerShell to do the same on Windows:
+
+```powershell
+New-NetIPAddress -InterfaceAlias "Loopback" -IPAddress "169.254.169.254" -PrefixLength 16
+```
+
+> [!NOTE]
+> It is highly unlikely that you already have a link for "169.254.169.254" in your environment.
+> However, take precautions not to override the already existing configuration.
+
+The default configuration of the metadataserver package sets up the following endpoint:
 
 * `http://169.254.169.254/computeMetadata/v1`
 
 > [!NOTE]
-> Currently metadata server does not support HTTPS endpoints
+> Currently metadataserver does not support HTTPS endpoints
 
 ## Use the package
 
 To use the package do the following:
 
-1. Import it in your code:
+1. Import the package into your code:
 
    ```go
    import "github.com/minherz/metadataserver"
@@ -39,14 +58,19 @@ To use the package do the following:
 3. Start the server:
 
    ```go
-   ms.Start()
+   err := ms.Start(context.Background())
    ```
 
 4. Stop the server:
 
    ```go
-   ms.Stop(context.Background())
+   err := ms.Stop(context.Background())
    ```
+
+> [!WARNING]
+> To run the code you have to make sure that you use IP that is defined in your system.
+> If your environment does not have this IP, link IP to your loopback interface.
+> Remember to unlink it after you finish running your code.
 
 ### Options
 
