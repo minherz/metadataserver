@@ -1,6 +1,8 @@
 package metadataserver_test
 
 import (
+	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -93,7 +95,7 @@ func TestNewServer(t *testing.T) {
 	}
 }
 
-func TestServer(t *testing.T) {
+func TestHandlers(t *testing.T) {
 	testConfig := &metadataserver.Configuration{
 		Address:         "1.2.3.4",
 		Endpoint:        "/custom/endpoint",
@@ -129,4 +131,45 @@ func TestServer(t *testing.T) {
 			t.Errorf("server response mismatch (-want +got):\n%s", diff)
 		}
 	}
+}
+
+func TestEndToEnd(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
+	port := findFreeLocalPort()
+	s, err := metadataserver.New(
+		metadataserver.WithAddress("0.0.0.0"),
+		metadataserver.WithPort(port))
+	if err != nil {
+		t.Errorf("expected no errors, got:%s", err)
+	}
+	if err := s.Start(context.Background()); err != nil {
+		t.Errorf("expected no errors, got:%s", err)
+	}
+	url := fmt.Sprintf("http://127.0.0.1:%d/computeMetadata/v1", port)
+	res, err := http.Get(url)
+	if err != nil {
+		t.Errorf("expected no errors, got:%s", err)
+	}
+	defer res.Body.Close()
+	resData, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Errorf("expected no errors, got:%s", err)
+	}
+	if string(resData) != "ok" {
+		t.Errorf("expected:\"ok\", got:%s", err)
+	}
+	if err := s.Stop(context.Background()); err != nil {
+		t.Errorf("expected no errors, got:%s", err)
+	}
+}
+
+func findFreeLocalPort() int {
+	var port int
+	dummy := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	server := httptest.NewServer(dummy)
+	fmt.Sscanf(server.URL, "http://127.0.0.1:%d", &port)
+	server.Close()
+	return port
 }

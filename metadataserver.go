@@ -124,16 +124,17 @@ func (s *Server) HttpHandler() http.Handler {
 
 // Start launches the server that will listen at the configured address and port
 // and will serve the metadata.
-func (s *Server) Start() {
-	s.logger.DebugContext(context.Background(), "starting metadata server", slog.Any("configuration", s.config))
+func (s *Server) Start(ctx context.Context) error {
+	s.logger.DebugContext(ctx, "starting metadata server", slog.Any("configuration", s.config))
 
 	go func() {
 		var srv = s.server
 		err := srv.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.logger.ErrorContext(context.Background(), "error listening and serving", slog.String("error", err.Error()))
+			s.logger.ErrorContext(ctx, "error listening and serving", slog.String("error", err.Error()))
 		}
 	}()
+	return nil
 }
 
 // Stop shuts down the running server
