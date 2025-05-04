@@ -1,0 +1,20 @@
+{
+    "name": "Google Cloud Compute Engine metadata server",
+    "address": "169.254.169.254",
+    "port": 80,
+    "endpoint": "computeMetadata/v1",
+    "metadata": {
+        "project-id": {
+            "value": "your-project-id"
+        },
+        "numeric-project-id": {
+            "value": "your-project-number"
+        },
+        "instance/id": {
+            "value": "instance-id"
+        },
+        "instance/zone": {
+            "value": "desired-zone-name"
+        }
+    }
+}

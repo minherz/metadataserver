@@ -1,0 +1,29 @@
+{
+    "name": "Google Cloud Kubernetes Engine metadata server",
+    "address": "169.254.169.254",
+    "port": 80,
+    "endpoint": "computeMetadata/v1",
+    "metadata": {
+        "project-id": {
+            "value": "your-project-id"
+        },
+        "numeric-project-id": {
+            "value": "your-project-number"
+        },
+        "instance/id": {
+            "value": "instance-id-of-the-node"
+        },
+        "instance/zone": {
+            "value": "zone-name-of-the- node"
+        },
+        "instance/attributes/cluster-location": {
+            "value": "zone-or-region-of-k8s-cluster"
+        },
+        "instance/attributes/cluster-name": {
+            "value": "k8s-cluster-name"
+        },
+        "instance/attributes/cluster-uid": {
+            "value": "k8s-cluster-id"
+        }
+    }
+}

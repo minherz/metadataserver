@@ -89,7 +89,10 @@ You can initialize server with the following options:
 
 ### Custom configuration
 
-You can customize the behavior of the metadata server by setting the following parameters:
+You can customize the behavior of the metadata server by setting URI paths and values that the server handles. See [example configurations](examples/) in the repo.
+
+You can configure the handlers and other parameters in JSON configuration file.
+See the following for the expected JSON keys and values:
 
 | Name | Type | Description |
 |---|---|---|
