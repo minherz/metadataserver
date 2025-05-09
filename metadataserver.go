@@ -13,6 +13,13 @@ import (
 	"time"
 )
 
+var (
+	// ErrServerAlreadyStarted indicates that the server is already running.
+	ErrServerAlreadyStarted error = errors.New("server has been already started")
+	// ErrServerIsNotRunning indicates that the server has not been started.
+	ErrServerIsNotRunning error = errors.New("server is not running")
+)
+
 // Server implements an instance of the metadata server.
 // It registers handlers based on the paths that are defined in the configuration.
 // The handlers can return either a literal or a value of the environment variable.
@@ -20,6 +27,7 @@ type Server struct {
 	logger *slog.Logger
 	config *Configuration
 	server *http.Server
+	status chan error
 }
 
 // Option allows to set up an instance of Server at creation time.
@@ -128,30 +136,41 @@ func (s *Server) HttpHandler() http.Handler {
 	return s.server.Handler
 }
 
-// Start launches the server that will listen at the configured address and port
-// and will serve the metadata.
+// Start launches the server to server configured metadata handlers.
+//
+// It returns ErrServerHasBeenStarted if the server has already been started.
+// Otherwise it return an error if failed to start serving on the configured address.
 func (s *Server) Start(ctx context.Context) error {
+	if s.status != nil {
+		return ErrServerAlreadyStarted
+	}
 	s.logger.DebugContext(ctx, "starting metadata server", slog.Any("configuration", s.config))
-	ch := make(chan error)
+	s.status = make(chan error)
 	go func() {
-		var srv = s.server
-		err := srv.ListenAndServe()
-		ch <- err
+		err := s.server.ListenAndServe()
+		s.status <- err
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			s.logger.ErrorContext(ctx, "error listening and serving", slog.String("error", err.Error()))
 		}
 	}()
 	select {
-	case err := <-ch:
+	case err := <-s.status:
 		return err
 	case <-time.After(100 * time.Millisecond):
 	}
 	return nil
 }
 
-// Stop shuts down the running server
+// Stop shuts down the running server.
+//
+// It returns ErrServerIsNotRunning if the server was not started.
+// Otherwise it return an error if failed to stop the running service.
 func (s *Server) Stop(ctx context.Context) error {
+	if s.status == nil {
+		return ErrServerIsNotRunning
+	}
 	s.logger.DebugContext(ctx, "stopping metadata server", slog.Any("configuration", s.config))
+	s.status = nil
 	shutdownCtx := context.Background()
 	shutdownCtx, cancel := context.WithTimeout(shutdownCtx, time.Duration(s.config.ShutdownTimeout)*time.Second)
 	defer cancel()
