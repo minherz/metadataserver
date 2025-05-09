@@ -1,8 +1,7 @@
-name: "main: build"
+name: "build"
 on:
   push:
     branches: ["main"]
-    paths: ["**.go", "**.mod", "**.sum", "test/**"]
 env:
   GOTOOLCHAIN: local
 permissions: {}
