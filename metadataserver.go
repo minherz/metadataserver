@@ -96,8 +96,12 @@ func New(opts ...Option) (*Server, error) {
 	})
 	for k, v := range s.config.Handlers {
 		urlPath := path.Join(s.config.Endpoint, k)
-		mux.HandleFunc(urlPath, func(w http.ResponseWriter, _ *http.Request) {
-			fmt.Fprint(w, v())
+		mux.HandleFunc(urlPath, func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			data := v()
+			s.logger.DebugContext(ctx, "metadata handler is called",
+				slog.String("handler", r.URL.Path), slog.String("response", data))
+			fmt.Fprint(w, data)
 		})
 	}
 	httpServer := &http.Server{
