@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 	"time"
@@ -32,22 +31,6 @@ func WithConfiguration(c *Configuration) Option {
 	return func(s *Server) {
 		s.config = c
 	}
-}
-
-func ExampleWithConfiguration() {
-	c := NewConfiguration(map[string]Metadata{
-		"project-id": func() string {
-			return os.Getenv("GOOGLE_CLOUD_PROJECT")
-		},
-		"instance/zone": func() string {
-			return "us-central1"
-		},
-	})
-	s, err := New(WithConfiguration(c))
-	if err != nil {
-		// handle error
-	}
-	s.Start(context.Background())
 }
 
 // WithAddress creates an Option that sets up a serving address for the server.
@@ -77,14 +60,6 @@ func WithLogger(l *slog.Logger) Option {
 	return func(s *Server) {
 		s.logger = l
 	}
-}
-
-func ExampleWithLogger() {
-	s, err := New(WithLogger(slog.Default()))
-	if err != nil {
-		// handle error
-	}
-	s.Start(context.Background())
 }
 
 // WithConfigFile creates an Option that loads a server configuration from a file.
@@ -138,14 +113,6 @@ func New(opts ...Option) (*Server, error) {
 	s.server = httpServer
 	s.logger.DebugContext(context.Background(), "server is created", slog.Any("configuration", s.config))
 	return s, nil
-}
-
-func ExampleNew() {
-	s, err := New(WithAddress("0.0.0.0"), WithPort(8080))
-	if err != nil {
-		// handle error
-	}
-	s.Start(context.Background())
 }
 
 // Configuration returns a copy of the server's configuration
