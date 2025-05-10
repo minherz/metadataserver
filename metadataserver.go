@@ -171,6 +171,7 @@ func (s *Server) Start(ctx context.Context) error {
 	}()
 	select {
 	case err := <-s.status:
+		s.status = nil
 		return err
 	case <-time.After(100 * time.Millisecond):
 	}
