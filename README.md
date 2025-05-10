@@ -9,28 +9,6 @@
 This is a simulation of the metadata server that run on cloud environments of such providers as Amazon, Google or Azure.
 This server is intended to assist in local debugging of applications that are intended for run in cloud environments and make use of the environment's metadata server.
 
-The package does not implement any networking configuration on the local host.
-If you code uses a hostname (e.g. `metadata.google.internal` for Google's metadata server), this hostname has to be explicitly configured in your debug environment or your code has to run the metadataserver using IP address instead.
-Majority of providers run their metadata servers using `169.254.169.254` IP address.
-It is a [link-local address](https://en.wikipedia.org/wiki/Link-local_address).
-This means that these addresses are usually have to be configured in the environment prior to use.
-
-Use the following Linux shell command to configure link this address to your localhost interface:
-
-```shell
-sudo ip addr add 169.254.169.254/16 dev lo
-```
-
-Use the following PowerShell to do the same on Windows:
-
-```powershell
-New-NetIPAddress -InterfaceAlias "Loopback" -IPAddress "169.254.169.254" -PrefixLength 16
-```
-
-> [!NOTE]
-> It is highly unlikely that you already have a link for "169.254.169.254" in your environment.
-> However, take precautions not to override the already existing configuration.
-
 The default configuration of the metadataserver package sets up the following endpoint:
 
 * `http://169.254.169.254/computeMetadata/v1`
@@ -68,10 +46,70 @@ To use the package do the following:
    err := ms.Stop(context.Background())
    ```
 
-> [!WARNING]
-> To run the code you have to make sure that you use IP that is defined in your system.
-> If your environment does not have this IP, link IP to your loopback interface.
-> Remember to unlink it after you finish running your code.
+### Using for unit testing
+
+This package can be used for local unit testing of the code that uses metadata server.
+
+> [!IMPORTANT]
+> If your code sends requests to the metadata server using IP address, make sure that this IP address is reachable.
+> Reference to [Metadata server IP address](#metadata-server-ip-address) section for more details.
+>
+> If your code sends requests to the metadata server using hostname, [edit hostname file](https://www.howtogeek.com/27350/beginner-geek-how-to-edit-your-hosts-file/) to link the hostname to localhost.
+
+In your test file start and stop the server as shown above.
+
+#### Test function example
+
+The following example starts metadata server on local host, listening at port 80 and serving requests at two endpoints:
+
+* computeMetadata/v1/project-id
+* computeMetadata/v1/instance/zone
+
+```go
+package service_test
+
+import (
+ "context"
+ "testing"
+
+ "github.com/org/project/service"
+ "github.com/minherz/metadataserver"
+)
+
+func TestMyService(t *testing.T) {
+ if testing.Short() {
+  t.Skip()
+ }
+ tests := []struct {
+  name  string
+  // rest of input/want/expected data
+ }{
+  name: "test1",
+ }}
+
+ s, err := metadataserver.New(
+    metadataserver.WithAddress("0.0.0.0"),
+    metadataserver.WithPort(80),
+    metadataserver.WithHandlers(
+      map[string]metadataserver.Metadata {
+        "project-id": func() string { return "your-test-project" },
+        "instance/zone": func() string { return "us-central1" },
+      }))
+ if err != nil {
+  t.Errorf("expected no errors, got: %v", err)
+ }
+ err = s.Start()
+ if err != nil {
+  t.Errorf("expected no errors, got: %v", err)
+ }
+ defer s.Stop()
+ for _, test := range tests {
+  t.Run(test.name, func(t *testing.T) {
+    // you test code
+  })
+ }
+}
+```
 
 ### Options
 
@@ -152,3 +190,27 @@ The following example of the custom configuration sets up the server to serve th
 > [!NOTE]
 > Configuration values that were not customized keep their default values.
 > If no metadata is configured, the server will respond at the path defined by the endpoint only.
+
+### Metadata server IP address
+
+The package does not implement any networking configuration on the local host.
+If you code uses a hostname (e.g. `metadata.google.internal` for Google's metadata server), this hostname has to be explicitly configured in your debug environment or your code has to run the metadataserver using IP address instead.
+Majority of providers run their metadata servers using `169.254.169.254` IP address.
+It is a [link-local address](https://en.wikipedia.org/wiki/Link-local_address).
+This means that these addresses are usually have to be configured in the environment prior to use.
+
+Use the following Linux shell command to configure link this address to your localhost interface:
+
+```shell
+sudo ip addr add 169.254.169.254/16 dev lo
+```
+
+Use the following PowerShell to do the same on Windows:
+
+```powershell
+New-NetIPAddress -InterfaceAlias "Loopback" -IPAddress "169.254.169.254" -PrefixLength 16
+```
+
+> [!NOTE]
+> It is highly unlikely that you already have a link for "169.254.169.254" in your environment.
+> However, take precautions not to override the already existing configuration.
