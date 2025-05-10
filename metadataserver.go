@@ -33,16 +33,9 @@ type Server struct {
 // Option allows to set up an instance of Server at creation time.
 type Option func(*Server)
 
-// WithConfiguration creates an Option that sets up a new configuration for the server.
-// DO NOT use it with `WithConfigFile`, `WithAddress` or `WithPort` option.
-func WithConfiguration(c *Configuration) Option {
-	return func(s *Server) {
-		s.config = c
-	}
-}
-
-// WithAddress creates an Option that sets up a serving address for the server.
-// DO NOT use it with `WithConfigFile` or `WithConfiguration` option.
+// WithAddress sets a new server with an IP address at which server accepts requests.
+//
+// Mind the order of options when use with [WithConfiguration] and [WithConfigFile].
 func WithAddress(address string) Option {
 	return func(s *Server) {
 		if s.config == nil {
@@ -52,26 +45,9 @@ func WithAddress(address string) Option {
 	}
 }
 
-// WithAddress creates an Option that sets up a listening port for the server.
-// DO NOT use it with `WithConfiguration`, `WithAddress` or `WithPort` option.
-func WithPort(port int) Option {
-	return func(s *Server) {
-		if s.config == nil {
-			s.config = NewConfiguration(DefaultConfigurationHandlers)
-		}
-		s.config.Port = port
-	}
-}
-
-// WithLogger creates an Option that sets up `slog.Logger` for the server.
-func WithLogger(l *slog.Logger) Option {
-	return func(s *Server) {
-		s.logger = l
-	}
-}
-
-// WithConfigFile creates an Option that loads a server configuration from a file.
-// DO NOT use it with `WithConfiguration` option.
+// WithConfigFile sets a new server with [Configuration] that is read from JSON file.
+//
+// Mind the order of options when use with [WithConfiguration], [WithAddress], [WithPort] and [WithHandlers].
 func WithConfigFile(path string) Option {
 	return func(s *Server) {
 		c, err := NewConfigFromFile(path)
@@ -82,6 +58,46 @@ func WithConfigFile(path string) Option {
 			return
 		}
 		s.config = c
+	}
+}
+
+// WithConfiguration sets a new server with [Configuration].
+//
+// Mind the order of options when use with [WithConfigFile], [WithAddress], [WithPort] and [WithHandlers].
+func WithConfiguration(c *Configuration) Option {
+	return func(s *Server) {
+		s.config = c
+	}
+}
+
+// WithHandlers sets a new server with a set of metadata handlers.
+//
+// Mind the order of options when use with [WithConfiguration] and [WithConfigFile].
+func WithHandlers(handlers map[string]Metadata) Option {
+	return func(s *Server) {
+		if s.config == nil {
+			s.config = NewConfiguration(DefaultConfigurationHandlers)
+		}
+		s.config.Handlers = handlers
+	}
+}
+
+// WithPort sets a new server with a port number at which server accepts requests.
+//
+// Mind the order of options when use with [WithConfiguration] and [WithConfigFile].
+func WithPort(port int) Option {
+	return func(s *Server) {
+		if s.config == nil {
+			s.config = NewConfiguration(DefaultConfigurationHandlers)
+		}
+		s.config.Port = port
+	}
+}
+
+// WithLogger sets a new server with an instance of [slog.Logger].
+func WithLogger(l *slog.Logger) Option {
+	return func(s *Server) {
+		s.logger = l
 	}
 }
 

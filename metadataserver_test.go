@@ -69,15 +69,25 @@ func TestNewServer(t *testing.T) {
 		{
 			name: "opt_address_and_port",
 			input: []metadataserver.Option{
-				metadataserver.WithAddress("10.11.12.13"),
-				metadataserver.WithPort(777),
+				metadataserver.WithAddress("4.3.2.1"),
+				metadataserver.WithPort(7777),
+				metadataserver.WithHandlers(
+					map[string]metadataserver.Metadata{
+						"entry1": func() string {
+							return "one"
+						},
+					}),
 			},
 			want: metadataserver.Configuration{
-				Address:         "10.11.12.13",
+				Address:         "4.3.2.1",
 				Endpoint:        metadataserver.DefaultEndpoint,
-				Port:            777,
+				Port:            7777,
 				ShutdownTimeout: metadataserver.DefaultShutdownTimeout,
-				Handlers:        metadataserver.DefaultConfigurationHandlers,
+				Handlers: map[string]metadataserver.Metadata{
+					"entry1": func() string {
+						return "one"
+					},
+				},
 			},
 		},
 	}
