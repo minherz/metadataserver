@@ -13,6 +13,8 @@ The default configuration of the metadataserver package sets up the following en
 
 * `http://169.254.169.254/computeMetadata/v1`
 
+All other endpoints are served by appending the path of the metadata to the default endpoint path.
+
 > [!NOTE]
 > Currently metadataserver does not support HTTPS endpoints
 
@@ -60,7 +62,7 @@ In your test file start and stop the server as shown above.
 
 #### Test function example
 
-The following example starts metadata server on local host, listening at port 80 and serving requests at two endpoints:
+The following example configures the metadata server to run on interloop interface, listening at port 80 and serving requests at the following two endpoints:
 
 * computeMetadata/v1/project-id
 * computeMetadata/v1/instance/zone
@@ -116,27 +118,32 @@ func TestMyService(t *testing.T) {
 You can initialize server with the following options:
 
 * `WithConfigFile()` -- allows to configure server using the JSON configuration file. See [Custom configuration](#custom-configuration) for the file format.
-  Do not use it together with `WithConfiguration()`, `WithAddress()` and `WithPort()`.
+  Mind the order of options when use with `WithConfiguration()`, `WithAddress()` and `WithPort()`.
 * `WithConfiguration()` -- allows to configure server with the `Configuration` object.
-  Do not use it together with `WithConfigFile()`, `WithAddress()` and `WithPort()`.
+  Mind the order of options when use with `WithConfigFile()`, `WithAddress()` and `WithPort()`.
 * `WithAddress()` -- allows to set up the serving address for the server.
-  Do not use it together with `WithConfigFile()` and `WithConfiguration()`.
+  Mind the order of options when use with `WithConfigFile()` and `WithConfiguration()`.
 * `WithPort()` -- allows to set up the port that the server will be listening at.
-  Do not use it together with `WithConfigFile()` and `WithConfiguration()`.
+  Mind the order of options when use with `WithConfigFile()` and `WithConfiguration()`.
+* `WithEndpoint()` -- allows to set up the default endpoint path.
+  Mind the order of options when use with `WithConfigFile()` and `WithConfiguration()`.
+* `WithHandlers()` -- allows to set up the metadata paths and responses when the metadata request is served at the paths.
+  Mind the order of options when use with `WithConfigFile()` and `WithConfiguration()`.
 * `WithLogger` -- allows to setup a custom `slog.Logger`. If no logger is set up the metadata server writes logs to `io.Discard`.
 
 ### Custom configuration
 
-You can customize the behavior of the metadata server by setting URI paths and values that the server handles. See [example configurations](examples/) in the repo.
+You can define custom configurations using JSON configuration file instead of setting them up in the code.
+See [example configurations](examples/) in the repo.
+You also can use `WithConfiguration()` option to define the configuration in the code instead of using other `With*` functions.
 
-You can configure the handlers and other parameters in JSON configuration file.
-See the following for the expected JSON keys and values:
+The JSON file schema is described below:
 
 | Name | Type | Description |
 |---|---|---|
 | `address` | `string` | IP address of where the server serves the requests. Default value `169.254.169.254`. |
 | `port` | `numeric` | Port number at which the server listens. Default value `80`. |
-| `endpoint` | `string` | The root path for all handlers. Server responses with "ok" when a request is sent to this path. The path can omit the starting and ending slashes. Default value `computeMetadata/v1`. |
+| `endpoint` | `string` | The default path. Together with `address` and `port` it defined the default endpoint and also is used as a prefix for other handler's paths. Sending request to the default endpoint always returns "ok". Default value `computeMetadata/v1`. |
 | `shutdownTimeout` | `numeric` | The time in seconds that takes to server to timeout at shutdown. Default value `5` (sec). |
 | `metadata` | map | Collection of key-values describing the returned metadata. See next paragraph for more information. |
 

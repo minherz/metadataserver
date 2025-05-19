@@ -70,6 +70,18 @@ func WithConfiguration(c *Configuration) Option {
 	}
 }
 
+// WithEndpoint sets a new default endpoint path.
+//
+// Mind the order of options when use with [WithConfiguration] and [WithConfigFile].
+func WithEndpoint(path string) Option {
+	return func(s *Server) {
+		if s.config == nil {
+			s.config = NewConfiguration(DefaultConfigurationHandlers)
+		}
+		s.config.Endpoint = path
+	}
+}
+
 // WithHandlers sets a new server with a set of metadata handlers.
 //
 // Mind the order of options when use with [WithConfiguration] and [WithConfigFile].

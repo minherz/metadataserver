@@ -14,28 +14,6 @@ import (
 )
 
 func TestNewServer(t *testing.T) {
-	testConfig := metadataserver.Configuration{
-		Address:         "1.2.3.4",
-		Endpoint:        "custom/endpoint",
-		Port:            8080,
-		ShutdownTimeout: 15,
-		Handlers: map[string]metadataserver.Metadata{
-			"entry1": func() string {
-				return "one"
-			},
-		},
-	}
-	wantConfig := metadataserver.Configuration{
-		Address:         "1.2.3.4",
-		Endpoint:        "/custom/endpoint",
-		Port:            8080,
-		ShutdownTimeout: 15,
-		Handlers: map[string]metadataserver.Metadata{
-			"entry1": func() string {
-				return "one"
-			},
-		},
-	}
 	tests := []struct {
 		name  string
 		input []metadataserver.Option
@@ -53,41 +31,96 @@ func TestNewServer(t *testing.T) {
 			},
 		},
 		{
-			name: "opt_config_from_object",
+			name: "opt_with_configuration",
 			input: []metadataserver.Option{
-				metadataserver.WithConfiguration(&testConfig),
-			},
-			want: wantConfig,
-		},
-		{
-			name: "opt_config_from_file",
-			input: []metadataserver.Option{
-				metadataserver.WithConfigFile("test/fixtures/config_smoke_test.json"),
-			},
-			want: wantConfig,
-		},
-		{
-			name: "opt_address_and_port",
-			input: []metadataserver.Option{
-				metadataserver.WithAddress("4.3.2.1"),
-				metadataserver.WithPort(7777),
-				metadataserver.WithHandlers(
-					map[string]metadataserver.Metadata{
+				metadataserver.WithConfiguration(&metadataserver.Configuration{
+					Address:         "1.2.3.4",
+					Endpoint:        "custom/endpoint",
+					Port:            8080,
+					ShutdownTimeout: 15,
+					Handlers: map[string]metadataserver.Metadata{
 						"entry1": func() string {
 							return "one"
 						},
-					}),
+					},
+				}),
+			},
+			want: metadataserver.Configuration{
+				Address:         "1.2.3.4",
+				Endpoint:        "/custom/endpoint",
+				Port:            8080,
+				ShutdownTimeout: 15,
+				Handlers: map[string]metadataserver.Metadata{
+					"entry1": func() string {
+						return "one"
+					},
+				},
+			},
+		},
+		{
+			name: "opt_with_config_file",
+			input: []metadataserver.Option{
+				metadataserver.WithConfigFile("test/fixtures/config_smoke_test.json"),
+			},
+			want: metadataserver.Configuration{
+				Address:         "1.2.3.4",
+				Endpoint:        "/custom/endpoint",
+				Port:            8080,
+				ShutdownTimeout: 15,
+				Handlers: map[string]metadataserver.Metadata{
+					"entry1": func() string {
+						return "one"
+					},
+				},
+			},
+		},
+		{
+			name: "opt_with_address_and_with_port",
+			input: []metadataserver.Option{
+				metadataserver.WithAddress("4.3.2.1"),
+				metadataserver.WithPort(7777),
 			},
 			want: metadataserver.Configuration{
 				Address:         "4.3.2.1",
 				Endpoint:        metadataserver.DefaultEndpoint,
 				Port:            7777,
 				ShutdownTimeout: metadataserver.DefaultShutdownTimeout,
+				Handlers:        metadataserver.DefaultConfigurationHandlers,
+			},
+		},
+		{
+			name: "opt_with_endpoint_and_with_handlers",
+			input: []metadataserver.Option{
+				metadataserver.WithEndpoint("custom/endpoint"),
+				metadataserver.WithHandlers(map[string]metadataserver.Metadata{
+					"entry1": func() string {
+						return "one"
+					},
+				}),
+			},
+			want: metadataserver.Configuration{
+				Address:         metadataserver.DefaultAddress,
+				Endpoint:        "/custom/endpoint",
+				Port:            metadataserver.DefaultPort,
+				ShutdownTimeout: metadataserver.DefaultShutdownTimeout,
 				Handlers: map[string]metadataserver.Metadata{
 					"entry1": func() string {
 						return "one"
 					},
 				},
+			},
+		},
+		{
+			name: "opt_with_endpoint_starting_with_slash",
+			input: []metadataserver.Option{
+				metadataserver.WithEndpoint("/custom/endpoint"),
+			},
+			want: metadataserver.Configuration{
+				Address:         metadataserver.DefaultAddress,
+				Endpoint:        "/custom/endpoint",
+				Port:            metadataserver.DefaultPort,
+				ShutdownTimeout: metadataserver.DefaultShutdownTimeout,
+				Handlers:        metadataserver.DefaultConfigurationHandlers,
 			},
 		},
 	}
