@@ -2,9 +2,11 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/minherz/metadataserver)](https://goreportcard.com/report/github.com/minherz/metadataserver)
 [![Build](https://github.com/minherz/metadataserver/actions/workflows/go.yaml/badge.svg)](https://github.com/minherz/metadataserver/actions/workflows/go.yaml)
+[![codecov](https://codecov.io/gh/minherz/metadataserver/branch/main/graph/badge.svg)](https://codecov.io/gh/minherz/metadataserver)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/minherz/metadataserver)](https://pkg.go.dev/github.com/minherz/metadataserver)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/minherz/metadataserver?label=go-version)
 ![Repo license](https://badgen.net/badge/license/Apache%202.0/blue)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fminherz%2Fmetadataserver.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fminherz%2Fmetadataserver?ref=badge_shield)
 
 This is a simulation of the metadata server that run on cloud environments of such providers as Amazon, Google or Azure.
 This server is intended to assist in local debugging of applications that are intended for run in cloud environments and make use of the environment's metadata server.

@@ -36,6 +36,7 @@ jobs:
       - name: Install goimports
         run: go install golang.org/x/tools/cmd/goimports@latest
       - run: goimports -w .
+      # Download all modules for all go.mod files
       - name: Run go mod tidy on all modules
         run: find . -name go.mod -execdir go mod tidy \;
       - name: Remove any toolchain lines
@@ -76,3 +77,19 @@ jobs:
       - name: Check code
         uses: actions/checkout@v4
       - run: go test -v
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    permissions: {contents: read}
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+      - name: Check code
+        uses: actions/checkout@v4
+      - name: Generate coverage
+        run:
+          go test -race -covermode=atomic -coverprofile=coverage.out
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
