@@ -24,9 +24,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
+        ref: ${{ steps.release-ver.outputs.result }}
         fetch-depth: 0
       if: ${{ steps.release-ver.outputs.result }}
     - name: Publish the new Go package version
       if: ${{ steps.release-ver.outputs.result }}
       run: |
-        GOPROXY=proxy.golang.org go list -m github.com/minherz/metadataserver@${{steps.release-ver.outputs.result}}
+        GOPROXY=proxy.golang.org go list -m "github.com/minherz/metadataserver@${{ steps.release-ver.outputs.result }}"
