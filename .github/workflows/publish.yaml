@@ -26,12 +26,7 @@ jobs:
       with:
         fetch-depth: 0
       if: ${steps.release-ver.outputs.result}
-    - name: Tag current code with release version
-      run: |
-        git tag ${{steps.release-ver.outputs.result}} ${{github.event.GITHUB_REF}}
-        git push origin --tags
-      if: ${steps.release-ver.outputs.result}
-    - name: Publish the Go package version
+    - name: Publish the new Go package version
       run: |
         GOPROXY=proxy.golang.org go list -m github.com/minherz/metadataserver@${{steps.release-ver.outputs.result}}
       if: ${steps.release-ver.outputs.result}
