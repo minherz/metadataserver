@@ -1,5 +1,6 @@
 # Metadata Server
 
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/minherz/metadataserver)](https://github.com/minherz/metadataserver/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/minherz/metadataserver)](https://goreportcard.com/report/github.com/minherz/metadataserver)
 [![Build](https://github.com/minherz/metadataserver/actions/workflows/go.yaml/badge.svg)](https://github.com/minherz/metadataserver/actions/workflows/go.yaml)
 [![codecov](https://codecov.io/gh/minherz/metadataserver/branch/main/graph/badge.svg)](https://codecov.io/gh/minherz/metadataserver)
